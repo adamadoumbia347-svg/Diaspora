@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Rotta Famiglia – Itinerari di viaggio su misura per famiglie con bambini</title>
-  <meta name="description" content="Raccontaci la vostra vacanza: in 3 giorni lavorativi ricevi un itinerario su misura per viaggiare con i bambini, giorno per giorno, con pause, alternative per la pioggia e consigli pratici.">
-  <meta property="og:title" content="Rotta Famiglia – La vacanza con i bambini, già organizzata">
-  <meta property="og:description" content="Itinerari di viaggio su misura per famiglie con bambini, consegnati in PDF in 3 giorni lavorativi.">
+  <title>Rotta Famiglia – Cerca voli, hotel e attività per viaggiare con i bambini</title>
+  <meta name="description" content="Inserisci una volta sola date, destinazione ed età dei bambini: confronta voli, hotel per famiglie e attività adatte ai più piccoli.">
+  <meta property="og:title" content="Rotta Famiglia – Il viaggio in famiglia parte da qui">
+  <meta property="og:description" content="Una ricerca sola per voli, hotel e attività adatti ai bambini.">
   <meta property="og:type" content="website">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%230f6e78'/%3E%3Cpath d='M11 27 30 11 23 30l-3-8z' fill='%23ffc24b'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="/styles.css">
@@ -21,72 +21,130 @@
       Rotta Famiglia
     </a>
     <nav class="nav" aria-label="Menu principale">
+      <a href="#idee">Idee di viaggio</a>
       <a href="#come-funziona">Come funziona</a>
-      <a href="#esempio">Esempio</a>
-      <a href="#prezzi">Prezzi</a>
       <a href="/guide/">Guide</a>
-      <a class="btn btn-small" href="#richiesta">Richiedi l'itinerario</a>
+      <a class="btn btn-small" href="/itinerario.html">Itinerario su misura</a>
     </nav>
   </div>
 </header>
 
 <main id="contenuto">
 
-  <section class="hero">
-    <div class="wrap">
-      <div>
-        <span class="eyebrow">Itinerari su misura per famiglie</span>
-        <h1>La vacanza con i bambini, già organizzata giorno per giorno.</h1>
-        <p class="lead">Raccontaci dove volete andare, quanti anni hanno i bambini e quanto volete spendere. In 3 giorni lavorativi ricevi un itinerario in PDF pensato per i loro ritmi: tappe, orari, pause e un piano B per la pioggia.</p>
-        <div class="hero-actions">
-          <a class="btn" href="#richiesta">Richiedi il tuo itinerario</a>
-          <a class="btn btn-ghost" href="#esempio">Guarda un esempio</a>
-        </div>
-        <ul class="hero-notes">
-          <li>Da 29 €</li>
-          <li>Una revisione inclusa</li>
-          <li>Prenoti tu, dove preferisci</li>
-        </ul>
+  <section class="hero search-hero">
+    <div class="wrap" style="display:block">
+      <div class="intro">
+        <span class="eyebrow">Viaggi in famiglia</span>
+        <h1>Voli, hotel e attività per chi viaggia con i bambini.</h1>
+        <p class="lead">Inserisci una volta sola date, destinazione ed età dei bambini. Ti portiamo ai risultati giusti per la tua famiglia, già filtrati.</p>
       </div>
 
-      <div class="plan-card" aria-label="Esempio di una giornata di itinerario">
-        <header>
-          <strong>Giorno 2 · Lisbona</strong>
-          <span>bambini di 4 e 7 anni</span>
-        </header>
-        <ol class="timeline">
-          <li><time>9:30</time><div>Oceanário di Lisbona<small>Biglietti online la sera prima, si entra senza fila.</small></div></li>
-          <li><time>12:30</time><div>Pranzo al Parque das Nações<small>Tavoli all'aperto e spazio per correre.</small></div></li>
-          <li><time>14:00</time><div>Rientro e riposo<small>Un'ora e mezza in alloggio: il pomeriggio regge meglio.</small><span class="tag">Pausa</span></div></li>
-          <li><time>16:30</time><div>Parco giochi del Jardim da Estrela<small>Chiosco con caffè per i grandi.</small></div></li>
-          <li><time>19:00</time><div>Cena presto vicino all'alloggio<small>Se piove: mattina invariata, pomeriggio al museo della scienza.</small><span class="tag">Piano B</span></div></li>
-        </ol>
-      </div>
+      <form class="search" id="ricerca" novalidate>
+        <div class="field span-2">
+          <label for="da">Partenza da</label>
+          <select id="da">
+            <option value="MXP">Milano Malpensa</option>
+            <option value="LIN">Milano Linate</option>
+            <option value="BGY">Bergamo Orio al Serio</option>
+            <option value="FCO">Roma Fiumicino</option>
+            <option value="CIA">Roma Ciampino</option>
+            <option value="VCE">Venezia</option>
+            <option value="TSF">Treviso</option>
+            <option value="VRN">Verona</option>
+            <option value="BLQ">Bologna</option>
+            <option value="TRN">Torino</option>
+            <option value="GOA">Genova</option>
+            <option value="PSA">Pisa</option>
+            <option value="FLR">Firenze</option>
+            <option value="NAP">Napoli</option>
+            <option value="BRI">Bari</option>
+            <option value="BDS">Brindisi</option>
+            <option value="CTA">Catania</option>
+            <option value="PMO">Palermo</option>
+            <option value="CAG">Cagliari</option>
+            <option value="OLB">Olbia</option>
+          </select>
+        </div>
+        <div class="field span-2">
+          <label for="a">Destinazione</label>
+          <select id="a">
+            <option value="">Scegli…</option>
+            <option value="AMS">Amsterdam</option>
+            <option value="ATH">Atene</option>
+            <option value="BCN">Barcellona</option>
+            <option value="BER">Berlino</option>
+            <option value="BRU">Bruxelles</option>
+            <option value="BUD">Budapest</option>
+            <option value="CPH">Copenaghen</option>
+            <option value="HER">Creta</option>
+            <option value="DUB">Dublino</option>
+            <option value="DBV">Dubrovnik</option>
+            <option value="LPA">Gran Canaria</option>
+            <option value="IBZ">Ibiza</option>
+            <option value="LIS">Lisbona</option>
+            <option value="LON">Londra</option>
+            <option value="MAD">Madrid</option>
+            <option value="AGP">Malaga</option>
+            <option value="MLA">Malta</option>
+            <option value="PMI">Palma di Maiorca</option>
+            <option value="PAR">Parigi</option>
+            <option value="OPO">Porto</option>
+            <option value="PRG">Praga</option>
+            <option value="RHO">Rodi</option>
+            <option value="SVQ">Siviglia</option>
+            <option value="STO">Stoccolma</option>
+            <option value="TFS">Tenerife</option>
+            <option value="VLC">Valencia</option>
+            <option value="VIE">Vienna</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="andata">Andata</label>
+          <input id="andata" type="date">
+        </div>
+        <div class="field">
+          <label for="ritorno">Ritorno</label>
+          <input id="ritorno" type="date">
+        </div>
+        <div class="field">
+          <label for="adulti">Adulti</label>
+          <select id="adulti">
+            <option>1</option><option selected>2</option><option>3</option><option>4</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="bambini">Bambini</label>
+          <select id="bambini">
+            <option>0</option><option>1</option><option selected>2</option><option>3</option><option>4</option>
+          </select>
+        </div>
+        <div class="full">
+          <div class="ages" id="eta-box"></div>
+        </div>
+        <p class="form-error full" id="errore" role="alert" hidden></p>
+        <div class="search-actions full">
+          <button class="btn" type="button" data-cerca="voli">Cerca voli<small>su Skyscanner</small></button>
+          <button class="btn btn-sea" type="button" data-cerca="hotel">Cerca hotel<small>su Booking.com</small></button>
+          <button class="btn btn-ink" type="button" data-cerca="attivita">Cerca attività<small>su GetYourGuide</small></button>
+        </div>
+      </form>
+      <p class="disclosure">I risultati si aprono sui siti dei nostri partner. Se prenoti da questi link possiamo ricevere una commissione, senza costi in più per te.</p>
     </div>
   </section>
 
-  <section class="alt">
+  <section id="idee" class="alt">
     <div class="wrap">
       <div class="section-head">
-        <h2>Organizzare un viaggio con i bambini richiede serate intere. Le passiamo noi al posto tuo.</h2>
-        <p>Le guide classiche sono scritte per adulti senza passeggino. Noi partiamo dall'età dei tuoi figli e costruiamo il resto intorno.</p>
+        <h2>Dove andare con i bambini</h2>
+        <p>Sei destinazioni europee che funzionano bene in famiglia. Tocca una scheda per iniziare la ricerca.</p>
       </div>
-      <div class="grid-3">
-        <div class="card">
-          <div class="icon" aria-hidden="true">🧸</div>
-          <h3>Ritmi a misura di bambino</h3>
-          <p>Poche tappe al giorno, spostamenti brevi, pause per il riposino e orari dei pasti rispettati.</p>
-        </div>
-        <div class="card">
-          <div class="icon" aria-hidden="true">⏱️</div>
-          <h3>Niente ore di ricerca</h3>
-          <p>Compili un modulo in cinque minuti. Al confronto tra quartieri, attività e trasporti pensiamo noi.</p>
-        </div>
-        <div class="card">
-          <div class="icon" aria-hidden="true">🧭</div>
-          <h3>Prenoti tu, dove vuoi</h3>
-          <p>Ti diciamo cosa prenotare e quando. Voli, alloggi e biglietti li acquisti tu, sui siti che preferisci.</p>
-        </div>
+      <div class="dest-grid">
+        <button class="dest d1" type="button" data-dest="VLC"><em>Mare e città</em><strong>Valencia</strong><span>Spiaggia in città, grande parco nel letto del fiume, acquario.</span></button>
+        <button class="dest d2" type="button" data-dest="LIS"><em>Città</em><strong>Lisbona</strong><span>Tram, acquario e oceano a pochi chilometri.</span></button>
+        <button class="dest d3" type="button" data-dest="CPH"><em>Città</em><strong>Copenaghen</strong><span>Parchi divertimento storici e una città pensata per i passeggini.</span></button>
+        <button class="dest d4" type="button" data-dest="TFS"><em>Sole d'inverno</em><strong>Tenerife</strong><span>Clima mite tutto l'anno, spiagge e parchi a tema.</span></button>
+        <button class="dest d5" type="button" data-dest="LON"><em>Grande città</em><strong>Londra</strong><span>Musei gratuiti e interattivi, parchi enormi.</span></button>
+        <button class="dest d6" type="button" data-dest="HER"><em>Mare</em><strong>Creta</strong><span>Spiagge con acqua bassa e ritmi tranquilli.</span></button>
       </div>
     </div>
   </section>
@@ -95,202 +153,54 @@
     <div class="wrap">
       <div class="section-head">
         <h2>Come funziona</h2>
-        <p>Tre passaggi, tutto via email.</p>
+        <p>Rotta Famiglia non vende viaggi: ti porta dove confrontarli e prenotarli.</p>
       </div>
       <div class="grid-3 steps">
         <div class="step">
-          <h3>Ci racconti il viaggio</h3>
-          <p>Destinazione (o solo un'idea), periodo, età dei bambini, budget e cosa vi piace fare.</p>
+          <h3>Dici chi parte</h3>
+          <p>Date, aeroporto, destinazione ed età di ogni bambino. Una volta sola.</p>
         </div>
         <div class="step">
-          <h3>Confermi e paghi</h3>
-          <p>Ti scriviamo entro un giorno lavorativo con il riepilogo e il link per il pagamento. Iniziamo solo dopo.</p>
+          <h3>Apri i risultati</h3>
+          <p>Voli, hotel e attività si aprono sui siti partner con la tua famiglia già impostata: niente da reinserire.</p>
         </div>
         <div class="step">
-          <h3>Ricevi l'itinerario</h3>
-          <p>In 3 giorni lavorativi arriva il PDF. Se qualcosa non ti convince, una revisione è inclusa.</p>
+          <h3>Prenoti dove conviene</h3>
+          <p>Scegli e paghi direttamente sul sito del partner, alle sue condizioni.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="esempio" class="dark">
-    <div class="wrap example">
+  <section class="dark">
+    <div class="wrap upsell">
       <div>
-        <h2>Cosa c'è dentro l'itinerario</h2>
-        <p>Un documento chiaro, da tenere sul telefono durante il viaggio.</p>
-        <ul class="checklist">
-          <li>Programma giorno per giorno con orari indicativi</li>
-          <li>Attività adatte all'età dei tuoi bambini</li>
-          <li>Pause, riposini e tempi di spostamento realistici</li>
-          <li>Alternativa al coperto per ogni giornata</li>
-          <li>Zona consigliata per l'alloggio e perché</li>
-          <li>Cosa prenotare in anticipo e cosa no</li>
-          <li>Lista di cosa mettere in valigia per quella destinazione</li>
-        </ul>
-        <p class="fineprint">La giornata qui accanto è un esempio illustrativo: orari, aperture e prezzi vengono verificati al momento di preparare il tuo itinerario.</p>
+        <h2>Non hai tempo di organizzare tutto?</h2>
+        <p>Ti prepariamo noi il programma giorno per giorno, su misura per l'età dei tuoi bambini: tappe, pause e un piano B per la pioggia. Da 29 €, consegnato in 3 giorni lavorativi.</p>
       </div>
-      <div class="plan-card">
-        <header>
-          <strong>Giorno 3 · Lisbona</strong>
-          <span>giornata leggera</span>
-        </header>
-        <ol class="timeline">
-          <li><time>10:00</time><div>Tram fino a Belém<small>Per i bambini il viaggio è già un'attrazione.</small></div></li>
-          <li><time>10:45</time><div>Giardini e lungofiume di Belém<small>Spazio aperto, niente code, passeggino comodo.</small></div></li>
-          <li><time>12:00</time><div>Pastéis de nata e pranzo<small>Merenda prima, pranzo dopo: si evita l'ora di punta.</small></div></li>
-          <li><time>14:00</time><div>Rientro e riposo<span class="tag">Pausa</span></div></li>
-          <li><time>17:00</time><div>Belvedere al tramonto e cena<small>Se piove: acquario o museo dei bambini al coperto.</small><span class="tag">Piano B</span></div></li>
-        </ol>
+      <div>
+        <a class="btn" href="/itinerario.html">Scopri l'itinerario su misura</a>
       </div>
     </div>
   </section>
 
-  <section id="prezzi" class="alt">
+  <section class="alt">
     <div class="wrap">
       <div class="section-head">
-        <h2>Prezzi chiari, per tutta la famiglia</h2>
-        <p>Paghi una volta sola, a prescindere da quanti siete.</p>
+        <h2>Guide per partire preparati</h2>
       </div>
-      <div class="grid-3">
-        <div class="card price-card">
-          <h3>Weekend</h3>
-          <p>Fino a 3 giorni</p>
-          <p class="price">29 €</p>
-          <ul class="checklist">
-            <li>Programma giorno per giorno</li>
-            <li>Piano B per la pioggia</li>
-            <li>Una revisione inclusa</li>
-          </ul>
-          <a class="btn btn-ghost" href="#richiesta" data-pacchetto="Weekend (fino a 3 giorni) – 29 €">Scegli Weekend</a>
-        </div>
-        <div class="card price-card featured">
-          <span class="badge">Il più scelto per le ferie</span>
-          <h3>Vacanza</h3>
-          <p>Da 4 a 7 giorni</p>
-          <p class="price">59 €</p>
-          <ul class="checklist">
-            <li>Tutto il pacchetto Weekend</li>
-            <li>Zona consigliata per l'alloggio</li>
-            <li>Lista valigia per la destinazione</li>
-          </ul>
-          <a class="btn" href="#richiesta" data-pacchetto="Vacanza (4–7 giorni) – 59 €">Scegli Vacanza</a>
-        </div>
-        <div class="card price-card">
-          <h3>Grande viaggio</h3>
-          <p>Da 8 a 14 giorni</p>
-          <p class="price">89 €</p>
-          <ul class="checklist">
-            <li>Tutto il pacchetto Vacanza</li>
-            <li>Più tappe e spostamenti tra città</li>
-            <li>Consigli su trasporti e noleggio auto</li>
-          </ul>
-          <a class="btn btn-ghost" href="#richiesta" data-pacchetto="Grande viaggio (8–14 giorni) – 89 €">Scegli Grande viaggio</a>
-        </div>
+      <div class="guide-list">
+        <a class="card guide-card" href="/guide/errori-viaggio-con-bambini.html">
+          <h3>7 errori da evitare quando organizzi un viaggio con i bambini</h3>
+          <p>Troppe tappe, orari sbagliati, alloggio lontano: gli sbagli più comuni e come evitarli.</p>
+          <span>Leggi la guida →</span>
+        </a>
+        <a class="card guide-card" href="/guide/valigia-bambini.html">
+          <h3>Cosa mettere in valigia per un viaggio con i bambini</h3>
+          <p>La lista completa, divisa per età, con quello che conviene comprare sul posto.</p>
+          <span>Leggi la guida →</span>
+        </a>
       </div>
-    </div>
-  </section>
-
-  <section id="domande">
-    <div class="wrap">
-      <div class="section-head">
-        <h2>Domande frequenti</h2>
-      </div>
-      <div class="faq">
-        <details>
-          <summary>Prenotate voi voli e hotel?</summary>
-          <p>No. Rotta Famiglia è un servizio di consulenza: non siamo un'agenzia di viaggi, non vendiamo pacchetti e non prenotiamo al posto tuo. Ti indichiamo cosa prenotare e quando; l'acquisto lo fai tu, in autonomia.</p>
-        </details>
-        <details>
-          <summary>Non ho ancora deciso la destinazione. Posso richiederlo lo stesso?</summary>
-          <p>Sì. Scrivi nel modulo periodo, budget ed età dei bambini: ti proponiamo due o tre destinazioni adatte e, dopo la tua scelta, prepariamo l'itinerario.</p>
-        </details>
-        <details>
-          <summary>Per quali età è pensato?</summary>
-          <p>Per famiglie con bambini da 0 a 12 anni. Con un neonato e con un bambino di dieci anni il viaggio cambia molto: per questo chiediamo l'età di ciascuno.</p>
-        </details>
-        <details>
-          <summary>E se l'itinerario non mi convince?</summary>
-          <p>Una revisione è inclusa nel prezzo: ci dici cosa cambiare e ti rimandiamo la versione aggiornata.</p>
-        </details>
-        <details>
-          <summary>In quanto tempo lo ricevo?</summary>
-          <p>Entro 3 giorni lavorativi dal pagamento. Se parti prima, scrivilo nelle note: ti diciamo subito se riusciamo.</p>
-        </details>
-        <details>
-          <summary>Le informazioni sono verificate?</summary>
-          <p>Controlliamo aperture e condizioni quando prepariamo l'itinerario, ma orari e prezzi possono cambiare: prima di partire verifica sempre sui siti ufficiali, soprattutto per documenti, requisiti di ingresso e regole delle compagnie aeree.</p>
-        </details>
-      </div>
-    </div>
-  </section>
-
-  <section id="richiesta" class="alt form-section">
-    <div class="wrap">
-      <div>
-        <h2>Richiedi il tuo itinerario</h2>
-        <p>Compila il modulo: ti rispondiamo entro un giorno lavorativo con il riepilogo e il link per il pagamento.</p>
-        <ul class="checklist">
-          <li>Nessun pagamento adesso</li>
-          <li>Consegna in 3 giorni lavorativi</li>
-          <li>Una revisione inclusa</li>
-        </ul>
-      </div>
-
-      <form class="request" name="richiesta" method="POST" action="/grazie.html" data-netlify="true" netlify-honeypot="sito-web">
-        <input type="hidden" name="form-name" value="richiesta">
-        <p class="hidden"><label>Non compilare: <input name="sito-web"></label></p>
-
-        <div class="field">
-          <label for="nome">Nome</label>
-          <input id="nome" name="nome" type="text" autocomplete="given-name" required>
-        </div>
-        <div class="field">
-          <label for="email">Email</label>
-          <input id="email" name="email" type="email" autocomplete="email" required>
-        </div>
-        <div class="field full">
-          <label for="destinazione">Destinazione (o un'idea)</label>
-          <input id="destinazione" name="destinazione" type="text" placeholder="Es. Lisbona, mare in Puglia, non lo so ancora" required>
-        </div>
-        <div class="field">
-          <label for="periodo">Periodo</label>
-          <input id="periodo" name="periodo" type="text" placeholder="Es. prima settimana di luglio" required>
-        </div>
-        <div class="field">
-          <label for="pacchetto">Pacchetto</label>
-          <select id="pacchetto" name="pacchetto" required>
-            <option>Weekend (fino a 3 giorni) – 29 €</option>
-            <option selected>Vacanza (4–7 giorni) – 59 €</option>
-            <option>Grande viaggio (8–14 giorni) – 89 €</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="adulti">Adulti</label>
-          <input id="adulti" name="adulti" type="number" min="1" max="10" value="2" required>
-        </div>
-        <div class="field">
-          <label for="eta">Età dei bambini</label>
-          <input id="eta" name="eta-bambini" type="text" placeholder="Es. 2 e 6 anni" required>
-        </div>
-        <div class="field full">
-          <label for="budget">Budget indicativo (voli e alloggio esclusi o inclusi, come preferisci)</label>
-          <input id="budget" name="budget" type="text" placeholder="Es. 1.500 € in tutto">
-        </div>
-        <div class="field full">
-          <label for="note">Cosa vi piace, cosa volete evitare</label>
-          <textarea id="note" name="note" placeholder="Es. il piccolo dorme dopo pranzo, niente musei lunghi, ci piace il mare"></textarea>
-        </div>
-        <div class="field full">
-          <label class="consent">
-            <input type="checkbox" name="privacy" required>
-            <span>Ho letto l'<a href="/privacy.html">informativa sulla privacy</a> e acconsento al trattamento dei miei dati per ricevere una risposta alla richiesta.</span>
-          </label>
-        </div>
-        <div class="field full">
-          <button class="btn" type="submit">Invia la richiesta</button>
-        </div>
-      </form>
     </div>
   </section>
 
@@ -299,24 +209,19 @@
 <footer class="site-footer">
   <div class="wrap">
     <div>
-      <p><strong>Rotta Famiglia</strong> – Itinerari di viaggio su misura per famiglie.</p>
-      <p>Servizio di consulenza: non siamo un'agenzia di viaggi, non vendiamo pacchetti turistici e non effettuiamo prenotazioni per conto dei clienti.</p>
+      <p><strong>Rotta Famiglia</strong> – Ricerca di viaggi per famiglie con bambini.</p>
+      <p>Non siamo un'agenzia di viaggi: non vendiamo voli, soggiorni o pacchetti. Le prenotazioni avvengono sui siti dei partner, di cui Rotta Famiglia è un sito indipendente. Alcuni link sono link di affiliazione.</p>
       <p>[DA COMPLETARE: nome o ragione sociale · P.IVA · email di contatto]</p>
     </div>
     <div>
+      <p><a href="/itinerario.html">Itinerario su misura</a></p>
       <p><a href="/guide/">Guide gratuite</a></p>
       <p><a href="/privacy.html">Privacy</a></p>
     </div>
   </div>
 </footer>
 
-<script>
-  // Preseleziona il pacchetto scelto nella sezione prezzi.
-  document.querySelectorAll('[data-pacchetto]').forEach(function (link) {
-    link.addEventListener('click', function () {
-      document.getElementById('pacchetto').value = link.dataset.pacchetto;
-    });
-  });
-</script>
+<script src="/config.js"></script>
+<script src="/search.js"></script>
 </body>
 </html>
