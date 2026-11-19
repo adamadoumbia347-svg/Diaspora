@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Courrier expliqué</title>
+<meta name="description" content="Prenez en photo une lettre officielle : on vous explique ce qu'elle dit, ce qu'il faut faire et avant quelle date, dans votre langue.">
+<style>
+  :root {
+    --bg: #f6f3ee; --card: #ffffff; --ink: #1c1b19; --muted: #6b665e; --line: #e2dcd2;
+    --brand: #0f5c4d; --brand-ink: #ffffff; --soft: #e6f0ed;
+    --urgent: #b3261e; --urgent-bg: #fbe9e7; --todo: #8a5a00; --todo-bg: #fdf1d8;
+    --info: #0f5c4d; --info-bg: #e6f0ed;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #151614; --card: #1f211e; --ink: #f0ede6; --muted: #a39e94; --line: #34372f;
+      --brand: #6fcab5; --brand-ink: #0c1f1b; --soft: #1d302b;
+      --urgent: #ffb4ab; --urgent-bg: #40201d; --todo: #f3c66b; --todo-bg: #3a2e12;
+      --info: #6fcab5; --info-bg: #1d302b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 17px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 640px; margin: 0 auto; padding: 28px 16px 56px; }
+  header { margin-bottom: 24px; }
+  .logo { font-weight: 700; color: var(--brand); letter-spacing: .01em; }
+  h1 { font-size: 1.75rem; line-height: 1.2; margin: 10px 0 8px; text-wrap: balance; }
+  .lead { color: var(--muted); margin: 0; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin-top: 16px; }
+  label.field { display: block; font-weight: 600; margin-bottom: 8px; }
+  select {
+    width: 100%; padding: 12px; font: inherit; color: var(--ink);
+    background: var(--bg); border: 1px solid var(--line); border-radius: 10px;
+  }
+  .drop {
+    display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center;
+    margin-top: 16px; padding: 28px 16px; border: 2px dashed var(--line); border-radius: 14px;
+    cursor: pointer; color: var(--muted);
+  }
+  .drop strong { color: var(--ink); font-size: 1.05rem; }
+  .drop:focus-within, .drop.over { border-color: var(--brand); background: var(--soft); }
+  .drop input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  #preview { display: none; max-width: 100%; max-height: 220px; border-radius: 10px; margin-top: 14px; }
+  button {
+    width: 100%; margin-top: 16px; padding: 15px; font: inherit; font-weight: 700;
+    color: var(--brand-ink); background: var(--brand); border: 0; border-radius: 12px; cursor: pointer;
+  }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.ghost { background: transparent; color: var(--brand); border: 1px solid var(--line); }
+  .note { font-size: .88rem; color: var(--muted); margin: 12px 0 0; }
+  .error { color: var(--urgent); background: var(--urgent-bg); border-radius: 10px; padding: 12px; margin-top: 16px; }
+  .badge { display: inline-block; padding: 5px 12px; border-radius: 999px; font-weight: 700; font-size: .9rem; }
+  .badge.urgent { color: var(--urgent); background: var(--urgent-bg); }
+  .badge.a_faire { color: var(--todo); background: var(--todo-bg); }
+  .badge.information { color: var(--info); background: var(--info-bg); }
+  h2 { font-size: 1.3rem; line-height: 1.25; margin: 12px 0 4px; }
+  h3 { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 22px 0 6px; }
+  .from { color: var(--muted); margin: 0; }
+  .deadline { border-left: 4px solid var(--urgent); background: var(--urgent-bg); border-radius: 0 10px 10px 0; padding: 12px 14px; margin-top: 18px; }
+  .deadline b { display: block; font-size: 1.15rem; }
+  ol, ul { margin: 0; padding-inline-start: 22px; }
+  li { margin-bottom: 6px; }
+  p { margin: 0; }
+  [hidden] { display: none !important; }
+  .spinner { width: 22px; height: 22px; border: 3px solid var(--line); border-top-color: var(--brand); border-radius: 50%; animation: spin .8s linear infinite; }
+  .loading { display: flex; align-items: center; gap: 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="logo">Courrier expliqué</div>
+    <h1>Une lettre officielle que vous ne comprenez pas ?</h1>
+    <p class="lead">Prenez-la en photo. On vous dit ce qu'elle dit, ce qu'il faut faire et avant quelle date, dans votre langue.</p>
+  </header>
+
+  <form id="form" class="card">
+    <label class="field" for="lang">Votre langue</label>
+    <select id="lang">
+      <option value="fr">Français simple</option>
+      <option value="en">English</option>
+      <option value="ar">العربية</option>
+      <option value="es">Español</option>
+      <option value="pt">Português</option>
+      <option value="tr">Türkçe</option>
+      <option value="uk">Українська</option>
+      <option value="ru">Русский</option>
+      <option value="zh">中文</option>
+      <option value="bm">Bamanankan</option>
+      <option value="snk">Soninké</option>
+      <option value="wo">Wolof</option>
+      <option value="ff">Pulaar</option>
+    </select>
+
+    <label class="drop" id="drop">
+      <input type="file" id="file" accept="image/jpeg,image/png,image/webp,application/pdf">
+      <strong>Prendre une photo ou choisir un fichier</strong>
+      <span>Photo nette, toute la page visible. PDF accepté.</span>
+      <img id="preview" alt="Aperçu du courrier">
+      <span id="filename"></span>
+    </label>
+
+    <button id="submit" disabled>Expliquer ce courrier</button>
+    <p class="note">Votre courrier est lu pour produire l'explication, puis n'est pas conservé par ce site.</p>
+    <div class="error" id="error" role="alert" hidden></div>
+  </form>
+
+  <div class="card loading" id="loading" hidden>
+    <div class="spinner"></div><span>Lecture du courrier… cela prend environ 20 secondes.</span>
+  </div>
+
+  <section class="card" id="result" aria-live="polite" hidden>
+    <span class="badge" id="badge"></span>
+    <h2 id="objet"></h2>
+    <p class="from" id="expediteur"></p>
+
+    <div class="deadline" id="deadline" hidden>
+      <b id="deadline-date"></b><span id="deadline-why"></span>
+    </div>
+
+    <h3>Ce que dit la lettre</h3>
+    <p id="resume"></p>
+
+    <div id="actions-block"><h3>Ce que vous devez faire</h3><ol id="actions"></ol></div>
+    <div id="documents-block"><h3>Papiers à préparer</h3><ul id="documents"></ul></div>
+    <div id="montant-block"><h3>Montant</h3><p id="montant"></p></div>
+    <div id="contact-block"><h3>Pour répondre</h3><p id="contact"></p></div>
+    <div id="aide-block"><h3>Qui peut vous aider</h3><p id="aide"></p></div>
+
+    <p class="note">Cette explication est produite automatiquement et peut contenir des erreurs. Elle ne remplace pas un conseil juridique : vérifiez les dates et montants sur la lettre.</p>
+    <button class="ghost" id="again" type="button">Expliquer un autre courrier</button>
+  </section>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const BADGES = { urgent: "Urgent", a_faire: "À faire", information: "Pour information" };
+const ERRORS = {
+  config: "Le service n'est pas encore configuré. Réessayez plus tard.",
+  taille: "Le fichier est trop lourd. Essayez avec une photo ou un PDF plus léger.",
+  format: "Ce fichier ne peut pas être lu. Utilisez une photo (JPG, PNG) ou un PDF.",
+  refus: "Ce document n'a pas pu être expliqué. Essayez avec une autre photo.",
+  charge: "Trop de demandes en ce moment. Réessayez dans une minute.",
+  service: "Le service a rencontré un problème. Réessayez dans un instant.",
+  reseau: "Pas de connexion. Vérifiez votre réseau et réessayez.",
+};
+const MAX_BYTES = 4.5 * 1024 * 1024;
+let payload = null;
+
+try { $("lang").value = localStorage.getItem("lang") || "fr"; } catch {}
+$("lang").addEventListener("change", () => { try { localStorage.setItem("lang", $("lang").value); } catch {} });
+
+function showError(code) {
+  $("error").textContent = ERRORS[code] || ERRORS.service;
+  $("error").hidden = false;
+}
+
+const toBase64 = (blob) => new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onload = () => resolve(reader.result.split(",")[1]);
+  reader.onerror = reject;
+  reader.readAsDataURL(blob);
+});
+
+// Phone photos are far larger than needed: shrink them so the upload is quick and stays under the limit.
+async function shrinkImage(file) {
+  const bitmap = await createImageBitmap(file);
+  const scale = Math.min(1, 2000 / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round(bitmap.width * scale);
+  canvas.height = Math.round(bitmap.height * scale);
+  canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  return new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.85));
+}
+
+async function pick(file) {
+  $("error").hidden = true;
+  payload = null;
+  $("submit").disabled = true;
+  if (!file) return;
+  try {
+    const isPdf = file.type === "application/pdf";
+    const blob = isPdf ? file : await shrinkImage(file);
+    if (blob.size > MAX_BYTES) return showError("taille");
+    payload = { file: await toBase64(blob), mediaType: isPdf ? "application/pdf" : "image/jpeg" };
+    $("preview").style.display = isPdf ? "none" : "block";
+    if (!isPdf) $("preview").src = URL.createObjectURL(blob);
+    $("filename").textContent = file.name;
+    $("submit").disabled = false;
+  } catch {
+    showError("format");
+  }
+}
+
+$("file").addEventListener("change", (e) => pick(e.target.files[0]));
+const drop = $("drop");
+drop.addEventListener("dragover", (e) => { e.preventDefault(); drop.classList.add("over"); });
+drop.addEventListener("dragleave", () => drop.classList.remove("over"));
+drop.addEventListener("drop", (e) => { e.preventDefault(); drop.classList.remove("over"); pick(e.dataTransfer.files[0]); });
+
+function fillList(id, items) {
+  const list = $(id);
+  list.replaceChildren(...(items || []).map((text) => Object.assign(document.createElement("li"), { textContent: text })));
+  $(id + "-block").hidden = list.children.length === 0;
+}
+function fillText(id, text) {
+  $(id).textContent = text || "";
+  $(id + "-block").hidden = !text;
+}
+
+function render(x, lang) {
+  const result = $("result");
+  result.lang = lang;
+  result.dir = lang === "ar" ? "rtl" : "ltr";
+  $("badge").className = "badge " + x.urgence;
+  $("badge").textContent = BADGES[x.urgence] || "";
+  $("badge").hidden = !x.lisible;
+  $("objet").textContent = x.objet;
+  $("expediteur").textContent = x.expediteur;
+  $("resume").textContent = x.resume;
+
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(x.date_limite) ? new Date(x.date_limite + "T00:00:00") : null;
+  $("deadline").hidden = !date;
+  if (date) {
+    const days = Math.round((date - new Date().setHours(0, 0, 0, 0)) / 86400000);
+    const when = days < 0 ? "date dépassée" : days === 0 ? "aujourd'hui" : `dans ${days} jour${days > 1 ? "s" : ""}`;
+    $("deadline-date").textContent = `Date limite : ${date.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })} (${when})`;
+    $("deadline-why").textContent = x.date_limite_explication;
+  }
+
+  fillList("actions", x.actions);
+  fillList("documents", x.documents);
+  fillText("montant", x.montant);
+  fillText("contact", x.contact);
+  fillText("aide", x.aide);
+  result.hidden = false;
+  result.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+$("form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!payload) return;
+  const lang = $("lang").value;
+  $("error").hidden = true;
+  $("result").hidden = true;
+  $("loading").hidden = false;
+  $("submit").disabled = true;
+  try {
+    const res = await fetch("/api/explain", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ ...payload, lang }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.explanation) showError(data.error || (res.status === 413 ? "taille" : "service"));
+    else render(data.explanation, lang);
+  } catch {
+    showError("reseau");
+  } finally {
+    $("loading").hidden = true;
+    $("submit").disabled = false;
+  }
+});
+
+$("again").addEventListener("click", () => {
+  $("result").hidden = true;
+  $("form").reset();
+  try { $("lang").value = localStorage.getItem("lang") || "fr"; } catch {}
+  $("preview").style.display = "none";
+  $("filename").textContent = "";
+  pick(null);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+</script>
+</body>
+</html>
