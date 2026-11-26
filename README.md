@@ -23,6 +23,7 @@ npm run serve     # aperçu local sur http://localhost:4173
 | --- | --- |
 | `SITE_URL` | Domaine canonique (sinon `URL` de Netlify, sinon `https://carfreedolomites.com`) |
 | `GOOGLE_SITE_VERIFICATION` | Jeton de validation Google Search Console |
+| `NOINDEX` | `1` = site masqué aux moteurs de recherche (préversion). À retirer au lancement |
 | `BOOKING_AID` | Identifiant d'affiliation Booking.com pour les liens hôtels |
 | `ROADBOOK_CHECKOUT_URL` | Lien de paiement du roadbook (sinon : liste d'attente) |
 

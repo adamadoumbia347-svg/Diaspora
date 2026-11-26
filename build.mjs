@@ -89,7 +89,7 @@ function layout(l, page) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(fullTitle)}</title>
 <meta name="description" content="${esc(page.description)}">
-${page.noindex ? '<meta name="robots" content="noindex, follow">' : `<link rel="canonical" href="${abs(url)}">`}
+${page.noindex || site.noindex ? '<meta name="robots" content="noindex, follow">' : `<link rel="canonical" href="${abs(url)}">`}
 ${alternates}
 <meta property="og:type" content="${page.ogType || 'website'}">
 <meta property="og:site_name" content="${site.name}">
@@ -386,6 +386,6 @@ write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>
 ${keys.flatMap((k) => site.langs.map((l) => `<url><loc>${abs(ROUTES[l][k])}</loc><lastmod>${site.lastReviewed}</lastmod>${site.langs.map((x) => `<xhtml:link rel="alternate" hreflang="${x}" href="${abs(ROUTES[x][k])}"/>`).join('')}<xhtml:link rel="alternate" hreflang="x-default" href="${abs(ROUTES[site.defaultLang][k])}"/></url>`)).join('\n')}
 </urlset>
 `);
-write('robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${abs('/sitemap.xml')}\n`);
+write('robots.txt', site.noindex ? 'User-agent: *\nDisallow: /\n' : `User-agent: *\nAllow: /\n\nSitemap: ${abs('/sitemap.xml')}\n`);
 write('_redirects', site.langs.filter((l) => l !== site.defaultLang).map((l) => `/${l}/*  /${l}/404.html  404`).join('\n') + '\n');
 console.log(`Built ${keys.length * site.langs.length} indexable pages → dist (${site.url})`);

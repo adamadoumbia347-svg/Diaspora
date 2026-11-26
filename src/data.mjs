@@ -11,6 +11,8 @@ export const site = {
   // Optional: checkout URL for the roadbook. When empty, the page shows a waiting list.
   roadbookCheckoutUrl: process.env.ROADBOOK_CHECKOUT_URL || '',
   // Optional: Google Search Console verification token.
+  // Set NOINDEX=1 on preview/staging deploys so search engines ignore them.
+  noindex: !!process.env.NOINDEX,
   googleSiteVerification: process.env.GOOGLE_SITE_VERIFICATION || '',
 };
 
