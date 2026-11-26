@@ -74,6 +74,8 @@ export default {
     no: 'Non',
     partly: 'En partie',
     print: 'Imprimer cette page',
+    photo: 'Photo',
+    photo_credits: 'Crédits photo',
   },
   regions: {
     'south-tyrol': 'Tyrol du Sud',

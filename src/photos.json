@@ -1,0 +1,72 @@
+{
+ "ortisei": {
+  "author": "Wolfgang Moroder",
+  "license": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Urtij%C3%ABi_udu_da_Ronc_via.jpg",
+  "w": 1600,
+  "h": 1067
+ },
+ "sancandido": {
+  "author": "Llorenzi",
+  "license": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:San_Candido_-_i_due_campanili.jpg",
+  "w": 1600,
+  "h": 1067
+ },
+ "cortina": {
+  "author": "kallerna",
+  "license": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Faloria_Cortina_d%27Ampezzo_10.jpg",
+  "w": 1600,
+  "h": 1066
+ },
+ "moena": {
+  "author": "Snowdog",
+  "license": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Moena_panorama.jpg",
+  "w": 1600,
+  "h": 1067
+ },
+ "seceda": {
+  "author": "Wolfgang Moroder",
+  "license": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Odles_da_Seceda_da_duman_tl_nibl_Gherd%C3%ABina.jpg",
+  "w": 1600,
+  "h": 1067
+ },
+ "siusi": {
+  "author": "Geir Hval (www.MacWhale.eu)",
+  "license": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Seiser_Alm_Alpe_di_Siusi_Sassolungo_Langkofel_Val_Gardena_S%C3%BCdtirol_Alto_Adige_Italia_Italy_%282017.09.21%29.jpg",
+  "w": 1600,
+  "h": 813
+ },
+ "trecime": {
+  "author": "Andrea Schieber",
+  "license": "CC BY-SA 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Sonnenuntergang_mit_Blick_auf_die_Drei_Zinnen_%28cropped%29.jpg",
+  "w": 1600,
+  "h": 994
+ },
+ "trecime2": {
+  "author": "Alessandro470804",
+  "license": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Toblach_%28Bolzano%29_-_3_Cime_di_Lavaredo_%28Drei_Zinnen%29_2999_m.jpg",
+  "w": 1600,
+  "h": 1064
+ },
+ "cinquetorri": {
+  "author": "Rüdiger Kratz",
+  "license": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Cinque-Torri_3003_b.jpg",
+  "w": 1600,
+  "h": 1067
+ },
+ "train": {
+  "author": "Whgler",
+  "license": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Bahnhof_Franzensfeste_2016a.jpg",
+  "w": 1600,
+  "h": 1067
+ }
+}

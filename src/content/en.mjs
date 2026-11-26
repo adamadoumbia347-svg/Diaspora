@@ -74,6 +74,8 @@ export default {
     no: 'No',
     partly: 'Partly',
     print: 'Print this page',
+    photo: 'Photo',
+    photo_credits: 'Photo credits',
   },
   regions: {
     'south-tyrol': 'South Tyrol',

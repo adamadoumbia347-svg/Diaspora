@@ -30,10 +30,10 @@ export const sources = {
 };
 
 export const villages = {
-  ortisei: { region: 'south-tyrol', geo: [46.5744, 11.6722], sources: ['suedtirolmobil', 'valgardena'], guides: ['guestpass'], itineraries: ['bolzano5', 'loop7'], hue: ['#1B4332', '#2D6A4F', '#74A98A', '#F4D9B0'] },
-  sancandido: { region: 'south-tyrol', geo: [46.7327, 12.2802], sources: ['suedtirolmobil', 'dreizinnen', 'prags'], guides: ['trecime', 'braies', 'guestpass'], itineraries: ['loop7'], hue: ['#22404F', '#3F6B7D', '#8FB3BF', '#F6E3C5'] },
-  cortina: { region: 'veneto', geo: [46.5405, 12.1357], sources: ['cortinaexpress', 'atvo', 'dolomitibus', 'suedtirolmobil'], guides: ['trecime'], itineraries: ['venice4'], hue: ['#5A2E1E', '#9A4B2A', '#D99A6C', '#FBE6CF'] },
-  moena: { region: 'trentino', geo: [46.3767, 11.6597], sources: ['trentinotrasporti', 'fassa', 'suedtirolmobil'], guides: [], itineraries: [], hue: ['#3B3A1E', '#6B6B2E', '#B5B878', '#F5EBC8'] },
+  ortisei: { region: 'south-tyrol', geo: [46.5744, 11.6722], sources: ['suedtirolmobil', 'valgardena'], guides: ['guestpass'], itineraries: ['bolzano5', 'loop7'] },
+  sancandido: { region: 'south-tyrol', geo: [46.7327, 12.2802], sources: ['suedtirolmobil', 'dreizinnen', 'prags'], guides: ['trecime', 'braies', 'guestpass'], itineraries: ['loop7'] },
+  cortina: { region: 'veneto', geo: [46.5405, 12.1357], sources: ['cortinaexpress', 'atvo', 'dolomitibus', 'suedtirolmobil'], guides: ['trecime'], itineraries: ['venice4'] },
+  moena: { region: 'trentino', geo: [46.3767, 11.6597], sources: ['trentinotrasporti', 'fassa', 'suedtirolmobil'], guides: [], itineraries: [] },
 };
 
 export const itineraries = {
@@ -62,3 +62,16 @@ export const connections = [
   { from: 'Trento', to: 'Moena', kind: 'bus', line: '101', time: '1 h 45 min', pass: 'yes' },
   { from: 'Bolzano / Bozen', to: 'Vigo di Fassa', kind: 'bus', line: '180', time: '1 h 15 min', pass: 'partly' },
 ];
+
+// Which photo illustrates which page (keys of src/photos.json + lago-di-braies).
+export const photoFor = {
+  'village:ortisei': 'ortisei', 'village:sancandido': 'sancandido', 'village:cortina': 'cortina', 'village:moena': 'moena',
+  'itinerary:bolzano5': 'siusi', 'itinerary:venice4': 'cinquetorri', 'itinerary:loop7': 'trecime2',
+  'guide:braies': 'lago-di-braies', 'guide:trecime': 'trecime', 'guide:guestpass': 'train', roadbook: 'seceda',
+};
+// Alt texts are place names, identical in every language.
+export const photoAlt = {
+  'lago-di-braies': 'Lago di Braies (Pragser Wildsee)', ortisei: 'Ortisei / St. Ulrich, Val Gardena', sancandido: 'San Candido / Innichen',
+  cortina: 'Cortina d’Ampezzo', moena: 'Moena, Val di Fassa', siusi: 'Alpe di Siusi & Sassolungo', seceda: 'Seceda & Odle, Val Gardena',
+  trecime: 'Tre Cime di Lavaredo', trecime2: 'Tre Cime di Lavaredo', cinquetorri: 'Cinque Torri', train: 'Fortezza / Franzensfeste',
+};

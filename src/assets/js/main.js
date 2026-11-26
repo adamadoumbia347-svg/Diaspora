@@ -1,4 +1,32 @@
 (function () {
+  var root = document.documentElement;
+  root.classList.add('js');
+
+  // Scroll reveal
+  var targets = document.querySelectorAll('main article.card-lift, main section > h2, main article > h2, main details, main ol.timeline > li.relative, main figure, main table, main form:not(#planner), .rv-map, [data-rv]');
+  if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    targets.forEach(function (el) {
+      var i = 0, sib = el;
+      while ((sib = sib.previousElementSibling) && i < 5) if (sib.tagName === el.tagName) i++;
+      el.style.setProperty('--i', el.classList.contains('card-lift') || el.tagName === 'DETAILS' ? i : 0);
+      el.classList.add('rv');
+      io.observe(el);
+    });
+    // safety net: never leave content hidden
+    setTimeout(function () { if (!document.querySelector('.rv.in')) targets.forEach(function (el) { el.classList.add('in'); }); }, 2500);
+  } else {
+    targets.forEach(function (el) { el.classList.add('in'); });
+  }
+
+  var header = document.querySelector('header.sticky');
+  if (header) {
+    var onScroll = function () { header.classList.toggle('scrolled', window.scrollY > 8); };
+    addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  }
+
   var btn = document.getElementById('menu-btn'), nav = document.getElementById('mobile-nav');
   if (btn && nav) btn.addEventListener('click', function () {
     var open = nav.classList.toggle('hidden') === false;

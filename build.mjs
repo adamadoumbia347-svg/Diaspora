@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
-import { site, sources, villages as V, itineraries as I, guides as G, connections } from './src/data.mjs';
+import { site, sources, villages as V, itineraries as I, guides as G, connections, photoFor as PF, photoAlt as PHOTO_ALT } from './src/data.mjs';
 
 const ROOT = path.dirname(new URL(import.meta.url).pathname);
 const DIST = path.join(ROOT, 'dist');
@@ -57,13 +57,11 @@ fs.copyFileSync(path.join(ROOT, 'src/assets/favicon.svg'), path.join(DIST, 'favi
 const LOGO = `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l5.5-8.5L13 15l3.5-4.5L21 17H3z"/><path d="M2 20h20"/><path d="M6 20v1.5M10 20v1.5M14 20v1.5M18 20v1.5"/></svg>`;
 const ARROW = `<svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>`;
 
-function rng(seed) { let a = [...seed].reduce((n, ch) => (n * 31 + ch.charCodeAt(0)) >>> 0, 7); return () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
-// Decorative Dolomite skyline, unique per village (not a photo, so it is aria-hidden).
-function peaks(id) {
-  const [c1, c2, c3, sky] = V[id].hue, r = rng(id), W = 800, H = 300;
-  const ridge = (base, amp, step) => { let d = `M0 ${H} L0 ${base}`; for (let x = 0; x <= W; x += step) { const y = base - r() * amp; d += ` L${x + step * 0.35} ${y.toFixed(0)} L${x + step * 0.5} ${(y + r() * amp * 0.35).toFixed(0)} L${x + step * 0.7} ${(y - r() * amp * 0.25).toFixed(0)}`; } return d + ` L${W} ${H} Z`; };
-  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" class="w-full h-full" aria-hidden="true"><rect width="${W}" height="${H}" fill="${sky}"/><circle cx="${620 - r() * 400}" cy="70" r="34" fill="#fff" opacity=".55"/><path d="${ridge(150, 95, 90)}" fill="${c3}"/><path d="${ridge(205, 70, 120)}" fill="${c2}"/><path d="${ridge(262, 40, 70)}" fill="${c1}"/></svg>`;
-}
+// ---------- photos ----------
+const PHOTOS = { 'lago-di-braies': { author: 'Unsplash', license: 'Unsplash License', source: 'https://unsplash.com/photos/1501785888041-af3ef285b470', w: 1600, h: 1067 }, ...JSON.parse(fs.readFileSync(path.join(ROOT, 'src/photos.json'), 'utf8')) };
+const img = (key, { cls = '', sizes = '100vw', eager = false, alt = PHOTO_ALT[key] } = {}) => { const f = PHOTOS[key], b = `/assets/img/${key}-`; return `<img src="${b}960.webp" srcset="${b}640.webp 640w, ${b}960.webp 960w, ${b}1600.webp 1600w" sizes="${sizes}" width="${f.w}" height="${f.h}" alt="${esc(alt)}" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" class="${cls}">`; };
+const credit = (l, key) => { const f = PHOTOS[key]; return `${esc(content[l].ui.photo)}: <a href="${f.source}" rel="noopener nofollow" class="underline underline-offset-2">${esc(f.author)}</a>, ${esc(f.license)}`; };
+const figure = (l, key) => `<figure class="mt-8"><div class="rounded-3xl overflow-hidden">${img(key, { cls: 'w-full h-56 sm:h-96 object-cover kenburns', sizes: '(min-width: 896px) 848px, 100vw', eager: true })}</div><figcaption class="text-xs text-stone-600 mt-2">${esc(PHOTO_ALT[key])} · ${credit(l, key)}</figcaption></figure>`;
 
 // ---------- layout ----------
 function layout(l, page) {
@@ -81,7 +79,7 @@ function layout(l, page) {
   const langSwitch = site.langs.map((x) => x === l
     ? `<span class="px-2 py-1 rounded-md bg-white text-alpine-pine shadow-sm" aria-current="true">${x.toUpperCase()}</span>`
     : `<a href="${page.noindex && !ROUTES[x][page.key] ? ROUTES[x].home : ROUTES[x][page.key]}" hreflang="${x}" lang="${x}" title="${esc(content[x].langName)}" class="px-2 py-1 rounded-md text-stone-600 hover:text-alpine-pine">${x.toUpperCase()}</a>`).join('');
-  const og = abs('/assets/img/lago-di-braies-1200.jpg');
+  const ogKey = PF[page.key] || 'lago-di-braies', og = abs(`/assets/img/${ogKey}-${ogKey === 'lago-di-braies' ? '1200.jpg' : '1600.webp'}`);
   return `<!doctype html>
 <html lang="${l}" class="scroll-smooth">
 <head>
@@ -97,8 +95,6 @@ ${alternates}
 <meta property="og:description" content="${esc(page.description)}">
 <meta property="og:url" content="${abs(url)}">
 <meta property="og:image" content="${og}">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="800">
 <meta property="og:locale" content="${c.ogLocale}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#1B4332">
@@ -128,6 +124,7 @@ ${ld.map((o) => `<script type="application/ld+json">${JSON.stringify(o).replace(
   </div>
   <nav id="mobile-nav" class="hidden lg:hidden border-t border-stone-200 px-4 py-3 flex-col gap-1 text-sm font-medium text-stone-700" aria-label="Mobile">${navLinks('block py-2')}<a href="${R.roadbook}" class="block py-2">${esc(t.nav_roadbook)}</a></nav>
 </header>
+${crumbs ? '<div class="read-progress" aria-hidden="true"></div>' : ''}
 <main id="main">
 ${crumbs ? `<nav aria-label="Breadcrumb" class="max-w-4xl mx-auto px-4 sm:px-6 pt-6 text-xs text-stone-600"><ol class="flex flex-wrap gap-1.5">${crumbs.map(([name, key], i) => `<li class="flex gap-1.5">${i ? '<span aria-hidden="true">›</span>' : ''}${key ? `<a href="${R[key]}" class="hover:text-alpine-terracotta underline-offset-2 hover:underline">${esc(name)}</a>` : `<span aria-current="page" class="text-stone-800">${esc(name)}</span>`}</li>`).join('')}</ol></nav>` : ''}
 ${page.body}
@@ -159,7 +156,7 @@ const btn = (href, label, cls = 'bg-alpine-pine hover:bg-alpine-pineLight text-w
 function villageCard(l, id, h = 'h3') {
   const c = content[l], t = c.ui, v = c.villages.items[id], R = ROUTES[l];
   return `<article data-region="${V[id].region}" class="bg-white rounded-3xl overflow-hidden border border-stone-200 card-lift flex flex-col">
-  <div class="relative h-48 overflow-hidden">${peaks(id)}<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent"></div>
+  <div class="relative h-52 overflow-hidden">${img(PF['village:' + id], { cls: 'card-img w-full h-full object-cover', sizes: '(min-width: 768px) 50vw, 100vw' })}<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent"></div>
     <div class="absolute top-3.5 left-3.5 flex flex-wrap gap-2"><span class="px-3 py-1 rounded-full bg-white text-alpine-pine text-xs font-bold">${esc(c.regions[V[id].region])}</span><span class="px-3 py-1 rounded-full bg-alpine-pine text-emerald-100 text-xs font-semibold">${esc(v.pass)}</span></div>
     <div class="absolute bottom-3.5 left-4 right-4 text-white"><p class="text-xs uppercase tracking-wider text-amber-200 font-semibold">${esc(v.valley)}</p><${h} class="font-serif text-2xl font-bold leading-tight"><a href="${R['village:' + id]}" class="after:absolute after:inset-0">${esc(v.name)}</a></${h}></div>
   </div>
@@ -173,7 +170,8 @@ function villageCard(l, id, h = 'h3') {
 
 function itineraryCard(l, id, h = 'h3') {
   const c = content[l], t = c.ui, it = c.itineraries.items[id], R = ROUTES[l];
-  return `<article class="relative bg-white rounded-3xl border border-stone-200 p-6 sm:p-7 card-lift flex flex-col">
+  return `<article class="relative bg-white rounded-3xl border border-stone-200 p-6 card-lift flex flex-col overflow-hidden">
+  <div class="-mx-6 -mt-6 mb-5 h-44 overflow-hidden">${img(PF['itinerary:' + id], { cls: 'card-img w-full h-full object-cover', sizes: '(min-width: 1024px) 33vw, 100vw' })}</div>
   <div class="flex items-center justify-between gap-3 mb-3"><span class="px-3 py-1 rounded-full bg-alpine-pine text-white text-xs font-bold">${I[id].days} ${esc(t.days)}</span><span class="text-xs font-semibold text-stone-600">${esc(it.tag)}</span></div>
   <${h} class="font-serif text-xl font-bold text-alpine-pine mb-2"><a href="${R['itinerary:' + id]}" class="after:absolute after:inset-0">${esc(it.h1)}</a></${h}>
   <p class="text-sm text-stone-700 mb-4">${esc(it.subtitle)}</p>
@@ -209,15 +207,15 @@ function homePage(l) {
   const plannerData = { bolzano5: { ...p.results.bolzano5, a: R['itinerary:bolzano5'], b: R['village:ortisei'] }, venice4: { ...p.results.venice4, a: R['itinerary:venice4'], b: R['village:cortina'] }, loop7: { ...p.results.loop7, a: R['itinerary:loop7'], b: R['village:sancandido'] }, moena: { ...p.results.moena, a: R.itineraries, b: R['village:moena'] } };
   const img = '/assets/img/lago-di-braies-';
   const body = `<section class="relative overflow-hidden bg-alpine-pine text-white">
-  <img src="${img}960.webp" srcset="${img}640.webp 640w, ${img}960.webp 960w, ${img}1600.webp 1600w" sizes="100vw" width="1600" height="1067" alt="" fetchpriority="high" decoding="async" class="absolute inset-0 w-full h-full object-cover opacity-40">
+  <img src="${img}960.webp" srcset="${img}640.webp 640w, ${img}960.webp 960w, ${img}1600.webp 1600w" sizes="100vw" width="1600" height="1067" alt="" fetchpriority="high" decoding="async" class="absolute inset-0 w-full h-full object-cover opacity-40 kenburns">
   <div class="absolute inset-0 bg-gradient-to-b from-alpine-pineDark/80 via-alpine-pine/80 to-alpine-pine"></div>
-  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 md:pt-16 md:pb-24">
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-32 md:pt-16 md:pb-44">
     <div class="max-w-3xl mx-auto text-center">
-      <p class="inline-flex flex-wrap justify-center items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15 text-amber-200 text-xs font-medium mb-6">${h.eyebrow.map(esc).join('<span aria-hidden="true">•</span>')}</p>
-      <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.12] mb-5">${esc(h.h1)}</h1>
-      <p class="text-base sm:text-lg text-stone-100 leading-relaxed max-w-2xl mx-auto mb-10">${esc(h.subtitle)}</p>
+      <p class="hero-in inline-flex flex-wrap justify-center items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15 text-amber-200 text-xs font-medium mb-6">${h.eyebrow.map(esc).join('<span aria-hidden="true">•</span>')}</p>
+      <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.12] mb-5 hero-words">${h.h1.split(' ').map((w, i) => `<span style="--i:${i}">${esc(w)}</span>`).join(' ')}</h1>
+      <p class="hero-in text-base sm:text-lg text-stone-100 leading-relaxed max-w-2xl mx-auto mb-10" style="--d:.45s">${esc(h.subtitle)}</p>
     </div>
-    <div class="max-w-4xl mx-auto bg-white text-alpine-slate rounded-2xl shadow-2xl p-4 sm:p-6">
+    <div class="hero-in max-w-4xl mx-auto bg-white text-alpine-slate rounded-2xl shadow-2xl p-4 sm:p-6" style="--d:.6s">
       <div class="flex items-center justify-between mb-4 pb-3 border-b border-stone-100"><h2 class="text-sm font-bold uppercase tracking-wider text-alpine-pine">${esc(p.heading)}</h2><span class="text-xs text-stone-600 hidden sm:inline">${esc(p.sub)}</span></div>
       <form id="planner" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">${sel('hub', p.hub, p.hubs)}${sel('duration', p.duration, p.durations)}${sel('style', p.style, p.styles)}
         <div class="sm:col-span-3 flex flex-col sm:flex-row items-center justify-between gap-3"><p class="text-xs text-stone-600">${md(p.tip)}</p><button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-alpine-terracotta hover:bg-alpine-terracottaHover text-white font-semibold text-sm px-6 py-3.5 rounded-xl shadow-md transition-colors">${esc(p.button)} ${ARROW}</button></div>
@@ -226,6 +224,7 @@ function homePage(l) {
       <script type="application/json" id="planner-data">${JSON.stringify(plannerData).replace(/</g, '\\u003c')}</script>
     </div>
   </div>
+  <div class="cableway" aria-hidden="true"><span class="cable"></span><svg class="cabin" viewBox="0 0 40 46" width="40" height="46"><path d="M20 0v12" stroke="#F7F6F2" stroke-width="2"/><rect x="4" y="12" width="32" height="28" rx="7" fill="#B8501A"/><rect x="8" y="17" width="10" height="10" rx="2" fill="#FDE9D0"/><rect x="22" y="17" width="10" height="10" rx="2" fill="#FDE9D0"/></svg></div>
 </section>
 <section class="py-16 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">${eyebrow(h.villages_eyebrow)}<h2 class="font-serif text-3xl sm:text-4xl font-bold text-alpine-pine">${esc(h.villages_h2)}</h2><p class="text-stone-700 mt-2 max-w-2xl mb-10">${esc(h.villages_intro)}</p>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-7">${vIds.map((id) => villageCard(l, id)).join('')}</div><p class="mt-8">${btn(R.villages, t.all_villages)}</p></section>
@@ -257,7 +256,7 @@ function villagePage(l, id) {
   const c = content[l], t = c.ui, v = c.villages.items[id], d = V[id], R = ROUTES[l];
   const h2 = (s) => `<h2 class="font-serif text-2xl font-bold text-alpine-pine mt-12 mb-4">${esc(s)}</h2>`;
   const hotel = v.hotel ? `<div class="bg-white rounded-2xl border border-stone-200 p-5 mt-5"><p class="text-[11px] font-bold uppercase tracking-wider text-alpine-terracotta mb-1">${esc(t.hotel_pick)}</p><h3 class="font-bold text-lg text-alpine-slate">${esc(v.hotel.name)}</h3><p class="text-stone-700 mt-1 mb-4">${esc(v.hotel.note)}</p><a href="https://www.booking.com/searchresults.html?ss=${encodeURIComponent(v.hotel.query)}${site.bookingAid ? '&aid=' + encodeURIComponent(site.bookingAid) : ''}" target="_blank" rel="${site.bookingAid ? 'sponsored ' : ''}nofollow noopener" class="inline-flex items-center gap-2 bg-alpine-pine hover:bg-alpine-pineLight text-white text-sm font-semibold px-5 py-3 rounded-xl transition-colors">${esc(t.hotel_cta)} ↗</a><p class="text-xs text-stone-600 mt-3">${esc(t.hotel_note)}</p></div>` : '';
-  const inner = `<div class="rounded-3xl overflow-hidden h-48 sm:h-64 mt-8">${peaks(id)}</div>
+  const inner = `${figure(l, PF['village:' + id])}
 <section aria-label="${esc(t.key_facts)}" class="grid sm:grid-cols-3 gap-4 mt-8">${[[t.rail_link, v.rail], [t.lifts, v.liftsText], [t.guest_pass, v.pass]].map(([k, val]) => `<div class="bg-white rounded-2xl border border-stone-200 p-4"><p class="text-[11px] font-bold uppercase tracking-wider text-alpine-terracotta mb-1">${esc(k)}</p><p class="text-sm text-stone-800">${esc(val)}</p></div>`).join('')}</section>
 ${h2(t.getting_there)}<ol class="space-y-3 list-decimal pl-5 marker:font-bold marker:text-alpine-terracotta text-stone-700 leading-relaxed">${v.gettingThere.map((s) => `<li>${md(s)}</li>`).join('')}</ol>
 ${h2(fill(t.day_trips, { name: v.name.split(' / ')[0] }))}<div class="grid sm:grid-cols-2 gap-4">${v.dayTrips.map((x) => `<div class="bg-white rounded-2xl border border-stone-200 p-5"><h3 class="font-bold text-alpine-slate mb-1">${esc(x.h)}</h3><p class="text-sm text-stone-700 leading-relaxed">${esc(x.p)}</p></div>`).join('')}</div>
@@ -274,8 +273,8 @@ ${sourcesBlock(l, d.sources)}`;
 function itineraryPage(l, id) {
   const c = content[l], t = c.ui, it = c.itineraries.items[id], d = I[id], R = ROUTES[l];
   const fact = (k, val) => `<div class="bg-white rounded-2xl border border-stone-200 p-4"><p class="text-[11px] font-bold uppercase tracking-wider text-alpine-terracotta mb-1">${esc(k)}</p><p class="text-sm text-stone-800">${esc(val)}</p></div>`;
-  const inner = `<section aria-label="${esc(t.at_a_glance)}" class="grid sm:grid-cols-2 gap-4 mt-8">${fact(t.duration, `${d.days} ${t.days}`)}${fact(t.start, it.start)}${fact(t.base, it.base)}${fact(t.budget, it.budget)}</section>
-<ol class="mt-10 space-y-6 relative before:absolute before:left-[9px] before:top-2 before:bottom-2 before:w-0.5 before:bg-stone-300">${it.days.map((x) => `<li class="relative pl-10"><span class="absolute left-0 top-1.5 w-5 h-5 rounded-full bg-alpine-pine border-4 border-alpine-stone" aria-hidden="true"></span><div class="bg-white rounded-2xl p-5 border border-stone-200"><p class="flex flex-wrap items-center justify-between gap-2 mb-1.5"><span class="text-xs font-bold uppercase tracking-wider text-alpine-terracotta">${esc(x.day)}</span><span class="px-2.5 py-0.5 rounded-full bg-alpine-stone text-alpine-pine text-xs font-semibold border border-stone-200">${esc(x.transit)}</span></p><h2 class="font-bold text-lg text-alpine-slate mb-1.5">${esc(x.title)}</h2><p class="text-stone-700 leading-relaxed">${esc(x.desc)}</p></div></li>`).join('')}</ol>
+  const inner = `${figure(l, PF['itinerary:' + id])}<section aria-label="${esc(t.at_a_glance)}" class="grid sm:grid-cols-2 gap-4 mt-8">${fact(t.duration, `${d.days} ${t.days}`)}${fact(t.start, it.start)}${fact(t.base, it.base)}${fact(t.budget, it.budget)}</section>
+<ol class="timeline mt-10 space-y-6 relative before:absolute before:left-[9px] before:top-2 before:bottom-2 before:w-0.5 before:bg-stone-300"><li class="timeline-fill" aria-hidden="true"></li>${it.days.map((x) => `<li class="relative pl-10"><span class="absolute left-0 top-1.5 w-5 h-5 rounded-full bg-alpine-pine border-4 border-alpine-stone" aria-hidden="true"></span><div class="bg-white rounded-2xl p-5 border border-stone-200"><p class="flex flex-wrap items-center justify-between gap-2 mb-1.5"><span class="text-xs font-bold uppercase tracking-wider text-alpine-terracotta">${esc(x.day)}</span><span class="px-2.5 py-0.5 rounded-full bg-alpine-stone text-alpine-pine text-xs font-semibold border border-stone-200">${esc(x.transit)}</span></p><h2 class="font-bold text-lg text-alpine-slate mb-1.5">${esc(x.title)}</h2><p class="text-stone-700 leading-relaxed">${esc(x.desc)}</p></div></li>`).join('')}</ol>
 <section class="mt-12"><h2 class="font-serif text-2xl font-bold text-alpine-pine mb-4">${esc(t.before_you_go)}</h2><ul class="space-y-3 text-stone-700 leading-relaxed">${it.tips.map((s) => `<li class="flex gap-3"><span class="text-emerald-700 font-bold" aria-hidden="true">✓</span><span>${md(s)}</span></li>`).join('')}</ul></section>
 ${related(t.base, [villageCard(l, d.village)])}
 ${faqBlock(l, it.faq)}
@@ -289,7 +288,7 @@ ${sourcesBlock(l, d.sources)}`;
 function guidePage(l, id) {
   const c = content[l], t = c.ui, g = c.guides.items[id], d = G[id], R = ROUTES[l];
   const img = '/assets/img/lago-di-braies-';
-  const photo = d.photo ? `<img src="${img}960.webp" srcset="${img}640.webp 640w, ${img}960.webp 960w, ${img}1600.webp 1600w" sizes="(min-width: 896px) 848px, 100vw" width="1600" height="1067" alt="Lago di Braies" fetchpriority="high" class="rounded-3xl mt-8 w-full h-56 sm:h-80 object-cover">` : '';
+  const photo = figure(l, PF['guide:' + id]);
   const inner = `${photo}<ul class="flex flex-wrap gap-2 mt-6">${[g.badge, g.line, ...g.bullets].map((b) => `<li class="px-3 py-1 rounded-full bg-white border border-stone-200 text-xs font-semibold text-stone-800">${esc(b)}</li>`).join('')}</ul>
 ${g.sections.map((s) => `<h2 class="font-serif text-2xl font-bold text-alpine-pine mt-10 mb-3">${esc(s.h)}</h2>${s.p.map((p) => `<p class="text-stone-700 leading-relaxed mb-4">${md(p)}</p>`).join('')}`).join('')}
 ${faqBlock(l, g.faq)}
@@ -304,12 +303,12 @@ function networkSvg(l) {
   const m = content[l].map;
   const N = { innsbruck: [110, 40, 'Innsbruck'], fortezza: [150, 150, 'Fortezza'], bressanone: [150, 205, 'Bressanone'], ponte: [150, 265, 'Ponte Gardena'], bolzano: [130, 345, 'Bolzano / Bozen'], ora: [130, 410, 'Ora / Auer'], trento: [130, 480, 'Trento'], verona: [130, 545, 'Verona'], monguelfo: [460, 150, 'Monguelfo'], dobbiaco: [580, 150, 'Dobbiaco'], sancandido: [690, 150, 'San Candido'], lienz: [820, 150, 'Lienz (AT)'], ortisei: [320, 265, 'Ortisei'], sella: [420, 320, 'Passo Sella'], braies: [500, 250, 'Lago di Braies'], trecime: [720, 270, 'Tre Cime'], cortina: [610, 370, 'Cortina d’Ampezzo'], venezia: [780, 530, 'Venezia'], vigo: [330, 395, 'Vigo di Fassa'], moena: [310, 470, 'Moena'] };
   const p = (...ids) => ids.map((i) => N[i].slice(0, 2).join(',')).join(' ');
-  const rail = (ids) => `<polyline points="${p(...ids)}" fill="none" stroke="#1E293B" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>`;
-  const bus = (ids, label, coach, dx = 0, dy = -8) => { const [a, b] = [N[ids[0]], N[ids.at(-1)]], w = Math.max(38, label.length * 8 + 14); return `<polyline points="${p(...ids)}" fill="none" stroke="${coach ? '#7C3AED' : '#B8501A'}" stroke-width="3" stroke-dasharray="${coach ? '2 7' : '9 5'}" stroke-linecap="round"/><g transform="translate(${(a[0] + b[0]) / 2 + dx},${(a[1] + b[1]) / 2 + dy})"><rect x="${-w / 2}" y="-11" width="${w}" height="20" rx="6" fill="#fff" stroke="${coach ? '#7C3AED' : '#B8501A'}"/><text text-anchor="middle" y="4" font-size="12" font-weight="700" fill="${coach ? '#5B21B6' : '#8A3A10'}">${label}</text></g>`; };
+  const rail = (ids) => `<polyline points="${p(...ids)}" fill="none" stroke="#1E293B" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" pathLength="1" class="rail"/>`;
+  const bus = (ids, label, coach, dx = 0, dy = -8) => { const [a, b] = [N[ids[0]], N[ids.at(-1)]], w = Math.max(38, label.length * 8 + 14); return `<polyline class="${coach ? 'coachline' : 'busline'}" points="${p(...ids)}" fill="none" stroke="${coach ? '#7C3AED' : '#B8501A'}" stroke-width="3" stroke-dasharray="${coach ? '2 7' : '9 5'}" stroke-linecap="round"/><g transform="translate(${(a[0] + b[0]) / 2 + dx},${(a[1] + b[1]) / 2 + dy})"><rect x="${-w / 2}" y="-11" width="${w}" height="20" rx="6" fill="#fff" stroke="${coach ? '#7C3AED' : '#B8501A'}"/><text text-anchor="middle" y="4" font-size="12" font-weight="700" fill="${coach ? '#5B21B6' : '#8A3A10'}">${label}</text></g>`; };
   const base = new Set(['ortisei', 'sancandido', 'cortina', 'moena']), sight = new Set(['braies', 'trecime', 'sella']), left = new Set(['innsbruck', 'fortezza', 'bressanone', 'ponte', 'bolzano', 'ora', 'trento', 'verona']), below = new Set(['sella', 'braies', 'trecime', 'cortina', 'venezia', 'vigo', 'moena']);
-  const nodes = Object.entries(N).map(([k, [x, y, name]]) => { const b = base.has(k), s = sight.has(k); const lx = left.has(k) ? x - 14 : x, ly = left.has(k) ? y + 5 : below.has(k) ? y + 26 : y - 16; return `<circle cx="${x}" cy="${y}" r="${b ? 10 : 7}" fill="${b ? '#1B4332' : s ? '#F59E0B' : '#fff'}" stroke="${b ? '#fff' : '#1E293B'}" stroke-width="${b ? 3 : 2.5}"/><text x="${lx}" y="${ly}" text-anchor="${left.has(k) ? 'end' : 'middle'}" font-size="${b ? 15 : 13}" font-weight="${b ? 700 : 500}" fill="#1E293B" paint-order="stroke" stroke="#fff" stroke-width="4">${name}</text>`; }).join('');
+  const nodes = Object.entries(N).map(([k, [x, y, name]], n) => { const b = base.has(k), s = sight.has(k); const lx = left.has(k) ? x - 14 : x, ly = left.has(k) ? y + 5 : below.has(k) ? y + 26 : y - 16; return `<g class="node" style="--i:${n}"><circle cx="${x}" cy="${y}" r="${b ? 10 : 7}" fill="${b ? '#1B4332' : s ? '#F59E0B' : '#fff'}" stroke="${b ? '#fff' : '#1E293B'}" stroke-width="${b ? 3 : 2.5}"/><text x="${lx}" y="${ly}" text-anchor="${left.has(k) ? 'end' : 'middle'}" font-size="${b ? 15 : 13}" font-weight="${b ? 700 : 500}" fill="#1E293B" paint-order="stroke" stroke="#fff" stroke-width="4">${name}</text></g>`; }).join('');
   const lg = (y, sw, label) => `<g transform="translate(430,${y})">${sw}<text x="46" y="4" font-size="12" fill="#1E293B">${esc(label)}</text></g>`;
-  return `<svg viewBox="-20 0 920 580" role="img" aria-labelledby="map-title" class="w-full h-auto bg-white rounded-3xl border border-stone-200" font-family="Inter, sans-serif"><title id="map-title">${esc(m.h1)}</title>
+  return `<svg viewBox="-20 0 920 580" role="img" aria-labelledby="map-title" class="rv-map w-full h-auto bg-white rounded-3xl border border-stone-200" font-family="Inter, sans-serif"><title id="map-title">${esc(m.h1)}</title>
 ${rail(['innsbruck', 'fortezza', 'bressanone', 'ponte', 'bolzano', 'ora', 'trento', 'verona'])}${rail(['fortezza', 'monguelfo', 'dobbiaco', 'sancandido', 'lienz'])}
 ${bus(['bolzano', 'ponte', 'ortisei'], '350', false, 10, -40)}${bus(['ortisei', 'sella'], '471')}${bus(['monguelfo', 'braies'], '439', false, -22, 0)}${bus(['dobbiaco', 'braies'], '442', false, 22, 0)}${bus(['dobbiaco', 'trecime'], '444', false, 26, 0)}${bus(['dobbiaco', 'cortina'], '445', false, 0, 50)}${bus(['bolzano', 'vigo'], '180')}${bus(['trento', 'moena', 'vigo'], '101', false, -20, 20)}${bus(['venezia', 'cortina'], esc(m.coach), true, 40, 0)}
 ${nodes}
@@ -338,7 +337,7 @@ function roadbookPage(l) {
   const cta = site.roadbookCheckoutUrl
     ? `<p class="mt-8"><a href="${esc(site.roadbookCheckoutUrl)}" class="inline-flex bg-alpine-terracotta hover:bg-alpine-terracottaHover text-white font-bold px-6 py-3.5 rounded-xl">${esc(r.buy_button)}</a></p>`
     : `<section class="mt-10 bg-white rounded-2xl border border-stone-200 p-6"><h2 class="font-serif text-2xl font-bold text-alpine-pine mb-2">${esc(r.waitlist_h2)}</h2><p class="text-stone-700 mb-1">${esc(r.waitlist_p)}</p><p class="text-sm text-stone-600 mb-4">${esc(r.price_note)}</p>${form(l, 'roadbook-waitlist', r.waitlist_button)}</section>`;
-  const inner = `<ul class="mt-8 space-y-3 text-stone-700">${r.features.map(li).join('')}</ul>
+  const inner = `${figure(l, PF.roadbook)}<ul class="mt-8 space-y-3 text-stone-700">${r.features.map(li).join('')}</ul>
 <h2 class="font-serif text-2xl font-bold text-alpine-pine mt-10 mb-4">${esc(r.outline_h2)}</h2><ol class="list-decimal pl-5 space-y-2 text-stone-700 marker:font-bold marker:text-alpine-terracotta">${r.outline.map((s) => `<li>${esc(s)}</li>`).join('')}</ol>${cta}
 ${related(c.ui.related_itineraries, [itineraryCard(l, 'bolzano5'), villageCard(l, 'ortisei')])}`;
   return { key: 'roadbook', title: r.title, description: r.description, crumbs: [[c.ui.nav_roadbook, null]],
@@ -353,6 +352,7 @@ function textPage(l, key, extra = '') {
 function aboutPage(l) {
   const c = content[l], a = c.about, t = c.ui;
   const page = textPage(l, 'about', `<section class="mt-10 bg-white rounded-2xl border border-stone-200 p-6"><h2 class="font-serif text-2xl font-bold text-alpine-pine mb-4">${esc(a.contact_h2)}</h2>${form(l, 'contact', a.contact_button, `<div><label for="contact-message" class="block text-sm font-semibold mb-1">${esc(t.message_label)}</label><textarea id="contact-message" name="message" rows="4" required class="w-full rounded-xl border border-stone-300 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-alpine-pine"></textarea></div>`)}</section>`);
+  page.body = page.body.replace('</article>', `<section class="mt-10"><h2 class="font-serif text-2xl font-bold text-alpine-pine mb-3">${esc(t.photo_credits)}</h2><ul class="text-sm text-stone-700 space-y-1.5">${Object.keys(PHOTOS).filter((k) => Object.values(PF).includes(k) || k === 'lago-di-braies').map((k) => `<li>${esc(PHOTO_ALT[k])} – <a href="${PHOTOS[k].source}" rel="noopener nofollow" class="underline underline-offset-2">${esc(PHOTOS[k].author)}</a>, ${esc(PHOTOS[k].license)}</li>`).join('')}</ul></section></article>`);
   page.jsonld = [{ '@context': 'https://schema.org', '@type': 'AboutPage', name: a.h1, inLanguage: l, about: org() }];
   return page;
 }

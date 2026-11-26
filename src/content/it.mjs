@@ -74,6 +74,8 @@ export default {
     no: 'No',
     partly: 'In parte',
     print: 'Stampa questa pagina',
+    photo: 'Foto',
+    photo_credits: 'Crediti fotografici',
   },
   regions: {
     'south-tyrol': 'Alto Adige',
